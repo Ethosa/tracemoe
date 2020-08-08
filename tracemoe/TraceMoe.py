@@ -112,10 +112,10 @@ class TraceMoe:
             ).json()
         elif isinstance(path, io.BufferedIOBase):
             encoded = b64encode(path.read()).decode("utf-8")
-            response = await self.session.post(
+            response = self.session.post(
                 url, json={"image": encoded, "filter": search_filter}
             )
-            return loads(await response.text())
+            return loads(response.text())
         else:
             with open(path, "rb") as f:
                 encoded = b64encode(f.read()).decode("utf-8")
