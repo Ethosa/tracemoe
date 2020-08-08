@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 # authors: Ethosa
+import io
 from json import loads
 from base64 import b64encode
 
@@ -100,7 +101,7 @@ class ATraceMoe:
         Searchs anime by image.
 
         Arguments:
-            path {str} -- image path or url.
+            path {typing.Union[str, typing.IO]} -- image path, url, or file-like object
 
         Keyword Arguments:
             is_url {bool} -- use url, if True. (default: {False})
@@ -116,6 +117,12 @@ class ATraceMoe:
         if is_url:
             response = await self.session.get(
                 url, params={"url": path}
+            )
+            return loads(await response.text())
+        elif isinstance(path, io.BufferedIOBase):
+            encoded = b64encode(path.read()).decode("utf-8")
+            response = await self.session.post(
+                url, json={"image": encoded, "filter": search_filter}
             )
             return loads(await response.text())
         else:
