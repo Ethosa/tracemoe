@@ -93,7 +93,7 @@ class TraceMoe:
         Searchs anime by image.
 
         Arguments:
-            path {str} -- image path or url.
+            path {typing.Union[str, typing.IO]} -- image path, url, or file-like object
 
         Keyword Arguments:
             is_url {bool} -- use url, if True. (default: {False})
@@ -110,6 +110,12 @@ class TraceMoe:
             return self.session.get(
                 url, params={"url": path}
             ).json()
+        elif isinstance(path, io.BufferedIOBase):
+            encoded = b64encode(path.read()).decode("utf-8")
+            response = await self.session.post(
+                url, json={"image": encoded, "filter": search_filter}
+            )
+            return loads(await response.text())
         else:
             with open(path, "rb") as f:
                 encoded = b64encode(f.read()).decode("utf-8")
