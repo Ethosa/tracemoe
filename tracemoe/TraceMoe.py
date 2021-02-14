@@ -12,12 +12,10 @@ class TraceMoe:
         """
         self.api_url = "https://trace.moe/api/"
         self.main_url = "https://trace.moe/"
-        self.media_url = "https://media.trace.moe/"
+        self.media_url = "https://trace.moe/media/"
         self.token = token
         self.session = Session()
-        self.session.headers = {
-            "Content-Type": "application/json"
-        }
+        self.session.headers = {"Content-Type": "application/json"}
 
     def me(self):
         """
@@ -33,7 +31,7 @@ class TraceMoe:
 
         return self.session.get(url).json()
 
-    def image_preview(self, response, index=0, page="thumbnail.php"):
+    def image_preview(self, response, index=0):
         """
         Gets image preview after server response.
 
@@ -43,11 +41,8 @@ class TraceMoe:
         Returns:
             bytes -- content for the write-in file.
         """
-        response = response["docs"][index]
-        url = "%s%s?anilist_id=%s&file=%s&t=%s&token=%s" % (
-            self.main_url, page, response["anilist_id"],
-            response["filename"], response["at"], response["tokenthumb"]
-        )
+        url = response["result"][index]["image"]
+
         return self.session.get(url).content
 
     def video_preview(self, response, index=0):
@@ -60,7 +55,9 @@ class TraceMoe:
         Returns:
             bytes -- content for the write-in file.
         """
-        return self.image_preview(response, index, "preview.php")
+        url = response["result"][index]["video"]
+
+        return self.session.get(url).content
 
     def video_preview_natural(self, response, index=0, mute=False):
         """
@@ -76,12 +73,8 @@ class TraceMoe:
         Returns:
             bytes -- content for the write-in file.
         """
-        response = response["docs"][index]
-        url = "%svideo/%s/%s?t=%s&token=%s" % (
-            self.media_url, response["anilist_id"],
-            response["filename"], response["at"],
-            response["tokenthumb"]
-        )
+        url = response["result"][index]["video"]
+        url += "&size=l"
 
         if mute:
             url += "&mute"
@@ -107,9 +100,7 @@ class TraceMoe:
             url += "?token=%s" % (self.token)
 
         if is_url:
-            return self.session.get(
-                url, params={"url": path}
-            ).json()
+            return self.session.get(url, params={"url": path}).json()
         else:
             with open(path, "rb") as f:
                 encoded = b64encode(f.read()).decode("utf-8")
