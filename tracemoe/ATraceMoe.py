@@ -4,6 +4,7 @@ from json import loads
 from base64 import b64encode
 
 from aiohttp import ClientSession
+from yarl import URL
 
 
 class ATraceMoe:
@@ -107,7 +108,9 @@ class ATraceMoe:
             url += "?token=%s" % (self.token)
 
         if is_url:
-            response = await self.session.get(url, params={"url": path})
+            response = await self.session.get(
+                URL(url, encoded=True), params={"url": path}
+            )
             return loads(await response.text())
         else:
             with open(path, "rb") as f:
