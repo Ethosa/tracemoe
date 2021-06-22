@@ -89,7 +89,7 @@ class ATraceMoe:
 
         return await response.content.read()
 
-    async def search(self, path, search_filter=0, is_url=False):
+    async def search(self, path, search_filter=0, is_url=False, **kwargs):
         """
         Searchs anime by image.
 
@@ -109,7 +109,7 @@ class ATraceMoe:
 
         if is_url:
             response = await self.session.get(
-                URL(url, encoded=True), params={"url": path}
+                URL(url, encoded=True), params={"url": path, **kwargs}
             )
             return loads(await response.text())
         else:

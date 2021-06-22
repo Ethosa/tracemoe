@@ -81,7 +81,7 @@ class TraceMoe:
 
         return self.session.get(url).content
 
-    def search(self, path, search_filter=0, is_url=False):
+    def search(self, path, search_filter=0, is_url=False, **kwargs2):
         """
         Searchs anime by image.
 
@@ -100,7 +100,7 @@ class TraceMoe:
             url += "?token=%s" % (self.token)
 
         if is_url:
-            return self.session.get(url, params={"url": path}).json()
+            return self.session.get(url, params={"url": path, **kwargs}).json()
         else:
             with open(path, "rb") as f:
                 encoded = b64encode(f.read()).decode("utf-8")
