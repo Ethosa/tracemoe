@@ -10,7 +10,7 @@ class TraceMoe:
         """
         Initialize trace moe API.
         """
-        self.api_url = "https://trace.moe/api/"
+        self.api_url = "https://api.trace.moe/"
         self.main_url = "https://trace.moe/"
         self.media_url = "https://trace.moe/media/"
         self.token = token
