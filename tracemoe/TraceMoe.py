@@ -101,9 +101,8 @@ class TraceMoe:
 
         if is_url:
             return self.session.get(url, params={"url": path, **kwargs}).json()
-        else:
-            with open(path, "rb") as f:
-                encoded = b64encode(f.read()).decode("utf-8")
-            return self.session.post(
-                url, json={"image": encoded, "filter": search_filter}
-            ).json()
+        with open(path, "rb") as f:
+            encoded = b64encode(f.read()).decode("utf-8")
+        return self.session.post(
+            url, json={"image": encoded, "filter": search_filter}
+        ).json()
